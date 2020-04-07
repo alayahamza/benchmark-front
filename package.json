@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node server.js",
     "build": "ng build",
     "deploy": "ng deploy --base-href=/benchmark/ --no-silent",
     "test": "ng test",
@@ -24,6 +24,7 @@
     "@angular/router": "~9.1.0",
     "bootstrap": "^4.4.1",
     "chart.js": "^2.9.3",
+    "express": "^4.17.1",
     "font-awesome": "^4.7.0",
     "ng2-charts": "^2.3.0",
     "rxjs": "~6.5.4",
