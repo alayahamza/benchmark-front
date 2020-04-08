@@ -73,6 +73,7 @@ export class BenchmarkComponent implements OnInit {
   }
 
   reset() {
+    this.isAwake();
     this.displayUploadResultButton = true;
     this.displayProgressBar = false;
     this.displayCharts = false;
