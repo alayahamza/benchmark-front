@@ -29,7 +29,16 @@
   <br>
   <br>
   <div id="default-analysis" *ngIf="displayCharts">
-    <app-radar-chart [chartData]="sectionChartData" [chartLabels]="sectionChartLabels"></app-radar-chart>
-    <app-radar-chart [chartData]="subSectionChartData" [chartLabels]="subSectionChartLabels"></app-radar-chart>
+    <app-chart [chartData]="companyChart.chartData"
+               [chartLabels]="companyChart.chartLabels"
+               [chartType]="companyChart.chartType"></app-chart>
+    <mat-tab-group>
+      <mat-tab label="{{chart.section}}" *ngFor="let chart of sectionCharts">
+        <app-chart [chartData]="chart.chartData"
+                   [chartLabels]="chart.chartLabels"
+                   [chartType]="chart.chartType">
+        </app-chart>
+      </mat-tab>
+    </mat-tab-group>
   </div>
 </div>
