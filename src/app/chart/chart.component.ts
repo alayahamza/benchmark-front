@@ -10,6 +10,7 @@ export class ChartComponent implements OnInit {
   @Input() public chartLabels;
   @Input() public chartData;
   @Input() public chartType;
+  @Input() public chartColors;
   public chartOptions: RadialChartOptions = {
     responsive: true,
   };

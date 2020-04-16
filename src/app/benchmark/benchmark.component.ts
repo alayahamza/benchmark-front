@@ -2,6 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {BenchmarkService} from '../core/benchmark.service';
 import {APP_BASE_HREF} from '@angular/common';
 import {Data} from '../core/model/data';
+import {Color} from 'ng2-charts';
 
 @Component({
   selector: 'app-benchmark',
@@ -72,15 +73,22 @@ export class BenchmarkComponent implements OnInit {
         data: sections, label: value.company
       });
     });
-    this.companyChart = {chartType: 'radar', chartLabels: sectionNames, chartData: sectionChartData};
+    this.companyChart = {
+      chartType: 'radar',
+      chartLabels: sectionNames,
+      chartData: sectionChartData,
+    };
   }
 
   private extractSubSectionData() {
+    const chartColors = this.generateColors(this.companies.length);
     this.sectionCharts = [];
-    let chart = {chartType: '', section: '', chartLabels: [], chartData: []};
+    let chart = {chartType: '', section: '', chartLabels: [], chartData: [], colors: []};
     let singleChartData = {data: [], label: ''};
     this.datas[0].sections.forEach(sec => {
-      chart = {chartType: 'bar', section: sec.name, chartLabels: [], chartData: []};
+      chart = {
+        chartType: 'radar', section: sec.name, chartLabels: [], chartData: [], colors: chartColors
+      };
       sec.subsections.forEach(sub => {
         chart.chartLabels.push(sub.name);
       });
@@ -100,5 +108,23 @@ export class BenchmarkComponent implements OnInit {
   private extractCompanies() {
     this.companies = [];
     this.datas.forEach(data => this.companies.push(data.company));
+  }
+
+  generateColors(size: number): Color[] {
+    const colors = [];
+    for (let counter = 0; counter < size; counter++) {
+      const r = Math.floor(Math.random() * 255);
+      const g = Math.floor(Math.random() * 255);
+      const b = Math.floor(Math.random() * 255);
+      colors.push({
+        backgroundColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 0.4 + ')',
+        pointBackgroundColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 1 + ')',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 1 + ')',
+        borderColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 0.8 + ')'
+      });
+    }
+    return colors;
   }
 }

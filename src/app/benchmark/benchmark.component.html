@@ -36,7 +36,8 @@
       <mat-tab label="{{chart.section}}" *ngFor="let chart of sectionCharts">
         <app-chart [chartData]="chart.chartData"
                    [chartLabels]="chart.chartLabels"
-                   [chartType]="chart.chartType">
+                   [chartType]="chart.chartType"
+                   [chartColors]="chart.colors">
         </app-chart>
       </mat-tab>
     </mat-tab-group>
