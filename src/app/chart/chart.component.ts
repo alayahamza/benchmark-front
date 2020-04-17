@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {RadialChartOptions} from 'chart.js';
 
 @Component({
   selector: 'app-chart',
@@ -10,10 +9,7 @@ export class ChartComponent implements OnInit {
   @Input() public chartLabels;
   @Input() public chartData;
   @Input() public chartType;
-  @Input() public chartColors;
-  public chartOptions: RadialChartOptions = {
-    responsive: true,
-  };
+  @Input() public chartOptions;
 
   constructor() {
   }

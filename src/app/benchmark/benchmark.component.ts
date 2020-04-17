@@ -2,7 +2,8 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {BenchmarkService} from '../core/benchmark.service';
 import {APP_BASE_HREF} from '@angular/common';
 import {Data} from '../core/model/data';
-import {Color} from 'ng2-charts';
+import {RadialChartOptions} from 'chart.js';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-benchmark',
@@ -17,12 +18,15 @@ export class BenchmarkComponent implements OnInit {
   displayUploadResultButton = true;
   displayCharts = false;
   displayProgressBar = false;
-  companyChart: any;
-  sectionCharts = [];
+  sectionChart: any;
+  subSectionChart: any;
   datas: Data[];
   companies: string[];
+  sectionColors: any[];
+  subSectionColors: any[];
 
-  constructor(@Inject(APP_BASE_HREF) baseHref: string, private benchmarkService: BenchmarkService) {
+  constructor(@Inject(APP_BASE_HREF) baseHref: string, private benchmarkService: BenchmarkService,
+              private snackBar: MatSnackBar) {
     this.baseHref = baseHref;
   }
 
@@ -40,7 +44,10 @@ export class BenchmarkComponent implements OnInit {
       this.extractSubSectionData();
       this.displayProgressBar = false;
       this.displayCharts = true;
-    }, error => console.error(error));
+    }, error => {
+      this.snackBar.open('Oups Something went wrong ! Please check your file !', '');
+      console.error(error);
+    });
   }
 
 
@@ -55,15 +62,19 @@ export class BenchmarkComponent implements OnInit {
     this.displayUploadResultButton = true;
     this.displayProgressBar = false;
     this.displayCharts = false;
-    this.companyChart = [];
-    this.sectionCharts = [];
+    this.sectionChart = {};
+    this.subSectionChart = {};
   }
 
   private extractSectionChartData() {
-    this.companyChart = {};
+    this.sectionColors = [];
+    this.sectionChart = {};
     const sectionChartData = [];
     const sectionNames = [];
-    this.datas[0].sections.forEach(section => sectionNames.push(section.name));
+    this.datas[0].sections.forEach(section => {
+      sectionNames.push(section.name);
+      this.sectionColors.push(this.generateColors());
+    });
     this.datas.forEach((value) => {
       const sections = [];
       value.sections.forEach(sec => {
@@ -73,36 +84,61 @@ export class BenchmarkComponent implements OnInit {
         data: sections, label: value.company
       });
     });
-    this.companyChart = {
+    const options: RadialChartOptions = {
+      responsive: true,
+      scale: {
+        pointLabels: {
+          fontColor: this.sectionColors,
+          fontStyle: 'bold italic'
+        },
+      }
+    };
+    this.sectionChart = {
       chartType: 'radar',
       chartLabels: sectionNames,
       chartData: sectionChartData,
+      chartOptions: options
     };
   }
 
   private extractSubSectionData() {
-    const chartColors = this.generateColors(this.companies.length);
-    this.sectionCharts = [];
-    let chart = {chartType: '', section: '', chartLabels: [], chartData: [], colors: []};
-    let singleChartData = {data: [], label: ''};
-    this.datas[0].sections.forEach(sec => {
-      chart = {
-        chartType: 'radar', section: sec.name, chartLabels: [], chartData: [], colors: chartColors
-      };
-      sec.subsections.forEach(sub => {
-        chart.chartLabels.push(sub.name);
+    this.subSectionColors = [];
+    this.subSectionChart = {};
+    const subSectionChartData = [];
+    const subSectionNames = [];
+    this.datas[0].sections.forEach((section, sectionIndex) => {
+      const color = this.sectionColors[sectionIndex];
+      section.subsections.forEach(subSection => {
+        this.subSectionColors.push(color);
+        subSectionNames.push(subSection.name);
       });
-      this.sectionCharts.push(chart);
     });
-    this.sectionCharts.forEach((sectionChart, sectionChartIndex) => {
-      this.datas.forEach((data, dataIndex) => {
-        singleChartData = {data: [], label: data.company};
-        data.sections[sectionChartIndex].subsections.forEach((subsection, subsectionIndex) => {
-          singleChartData.data.push(subsection.average);
+    this.datas.forEach((company) => {
+      const subSections = [];
+      company.sections.forEach(sec => {
+        sec.subsections.forEach(subsec => {
+          subSections.push(subsec.average);
         });
-        sectionChart.chartData.push(singleChartData);
+      });
+      subSectionChartData.push({
+        data: subSections, label: company.company
       });
     });
+    const options: RadialChartOptions = {
+      responsive: true,
+      scale: {
+        pointLabels: {
+          fontColor: this.subSectionColors,
+          fontStyle: 'bold italic'
+        },
+      }
+    };
+    this.subSectionChart = {
+      chartType: 'radar',
+      chartLabels: subSectionNames,
+      chartData: subSectionChartData,
+      chartOptions: options
+    };
   }
 
   private extractCompanies() {
@@ -110,21 +146,11 @@ export class BenchmarkComponent implements OnInit {
     this.datas.forEach(data => this.companies.push(data.company));
   }
 
-  generateColors(size: number): Color[] {
-    const colors = [];
-    for (let counter = 0; counter < size; counter++) {
-      const r = Math.floor(Math.random() * 255);
-      const g = Math.floor(Math.random() * 255);
-      const b = Math.floor(Math.random() * 255);
-      colors.push({
-        backgroundColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 0.4 + ')',
-        pointBackgroundColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 1 + ')',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 1 + ')',
-        borderColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 0.8 + ')'
-      });
-    }
-    return colors;
+  generateColors(): string {
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+    return 'rgb(' + r + ',' + g + ',' + b + ',' + 1 + ')';
   }
+
 }

@@ -15,6 +15,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {MatTabsModule} from '@angular/material/tabs';
     BrowserAnimationsModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatTabsModule
+    MatTabsModule,
+    MatSnackBarModule
   ],
   providers: [
     BenchmarkService,
