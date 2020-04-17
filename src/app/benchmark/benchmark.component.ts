@@ -4,6 +4,7 @@ import {APP_BASE_HREF} from '@angular/common';
 import {Data} from '../core/model/data';
 import {RadialChartOptions} from 'chart.js';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {Colors} from '../core/model/colors';
 
 @Component({
   selector: 'app-benchmark',
@@ -71,17 +72,25 @@ export class BenchmarkComponent implements OnInit {
     this.sectionChart = {};
     const sectionChartData = [];
     const sectionNames = [];
-    this.datas[0].sections.forEach(section => {
-      sectionNames.push(section.name);
-      this.sectionColors.push(this.generateColors());
-    });
-    this.datas.forEach((value) => {
+    // this.datas.forEach(data => {
+    //   data.sections.forEach((section, sectionIndex) => {
+    //     if (sectionNames.indexOf(section.name) === -1) {
+    //       sectionNames.push(section.name);
+    //       this.sectionColors.push(Colors.list[sectionIndex]);
+    //     }
+    //   });
+    // });
+    this.datas.forEach((data) => {
       const sections = [];
-      value.sections.forEach(sec => {
-        sections.push(sec.average);
+      data.sections.forEach((sec, secIndex) => {
+        if (sectionNames.indexOf(sec.name) === -1) {
+          sectionNames.push(sec.name);
+          this.sectionColors.push(Colors.list[secIndex]);
+        }
+        sections.push(sec.average.toFixed(2));
       });
       sectionChartData.push({
-        data: sections, label: value.company
+        data: sections, label: data.company
       });
     });
     const options: RadialChartOptions = {
@@ -106,18 +115,22 @@ export class BenchmarkComponent implements OnInit {
     this.subSectionChart = {};
     const subSectionChartData = [];
     const subSectionNames = [];
-    this.datas[0].sections.forEach((section, sectionIndex) => {
-      const color = this.sectionColors[sectionIndex];
-      section.subsections.forEach(subSection => {
-        this.subSectionColors.push(color);
-        subSectionNames.push(subSection.name);
+    this.datas.forEach(data => {
+      data.sections.forEach((section, sectionIndex) => {
+        const color = this.sectionColors[sectionIndex];
+        section.subsections.forEach(subSection => {
+          if (subSectionNames.indexOf(subSection.name) === -1) {
+            this.subSectionColors.push(color);
+            subSectionNames.push(subSection.name);
+          }
+        });
       });
     });
     this.datas.forEach((company) => {
       const subSections = [];
       company.sections.forEach(sec => {
         sec.subsections.forEach(subsec => {
-          subSections.push(subsec.average);
+          subSections.push(subsec.average.toFixed(2));
         });
       });
       subSectionChartData.push({
