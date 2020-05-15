@@ -2,6 +2,10 @@ variables:
     CONTAINER_NAME: benchmark-front
     IMAGE_NAME: alayahamza/benchmark-front:latest
 
+cache:
+  paths:
+    - /dist
+
 stages:
   - npm-build
   - docker-build
