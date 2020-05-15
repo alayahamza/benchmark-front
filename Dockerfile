@@ -2,9 +2,9 @@ FROM node:14-alpine
 
 WORKDIR /app
 
-COPY . .
-
 RUN npm ci && \
     npm run build
+
+COPY . .
 
 CMD [ "node", "server.js" ]
