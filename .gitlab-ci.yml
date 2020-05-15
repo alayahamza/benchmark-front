@@ -5,6 +5,7 @@ variables:
 cache:
   paths:
     - /dist
+    - node_modules
 
 stages:
   - npm-build
@@ -19,6 +20,7 @@ npm-build-dist:
   artifacts:
       paths:
         - dist/
+        - node_modules
 
 docker-build-image:
   stage: docker-build
@@ -29,6 +31,7 @@ docker-build-image:
   artifacts:
       paths:
         - dist/
+        - node_modules
 
 deploy-benchmark-front:
   stage: deploy
