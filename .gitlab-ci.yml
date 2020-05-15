@@ -16,9 +16,9 @@ npm-build-dist:
   script:
     - npm ci
     - npm run build
-artifacts:
-    paths:
-      - dist/
+  artifacts:
+      paths:
+        - dist/
 
 docker-build-image:
   stage: docker-build
@@ -26,9 +26,9 @@ docker-build-image:
     - docker build -t $IMAGE_NAME .
     - docker login -u $DOCKER_USER -p $DOCKER_PASS
     - docker push $IMAGE_NAME
-artifacts:
-    paths:
-      - dist/
+  artifacts:
+      paths:
+        - dist/
 
 deploy-benchmark-front:
   stage: deploy
