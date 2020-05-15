@@ -2,8 +2,9 @@ FROM node:14-alpine
 
 WORKDIR /app
 
-COPY dist /app/
-COPY server.js /app/
-COPY node_modules /app/
+COPY . .
+
+RUN npm ci && \
+    npm run build
 
 CMD [ "node", "server.js" ]
