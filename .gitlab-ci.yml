@@ -1,0 +1,28 @@
+variables:
+    CONTAINER_NAME: benchmark-front
+    IMAGE_NAME: alayahamza/benchmark-front:latest
+
+stages:
+  - npm-build
+  - docker-build
+  - deploy
+
+npm-build-dist:
+  stage: npm-build
+  script:
+    - npm ci
+    - npm run build
+
+docker-build-image:
+  stage: docker-build
+  script:
+    - docker build -t $IMAGE_NAME .
+    - docker login -u $DOCKER_USER -p $DOCKER_PASS
+    - docker push $IMAGE_NAME
+
+deploy-benchmark-front:
+  stage: deploy
+  script:
+    - if [ $(docker ps | grep $IMAGE_NAME | wc -l) -gt 0 ]; then docker stop $CONTAINER_NAME; fi
+    - docker login -u $DOCKER_USER -p $DOCKER_PASS
+    - docker run --rm -d -p 5555:8080 --name $CONTAINER_NAME $IMAGE_NAME
