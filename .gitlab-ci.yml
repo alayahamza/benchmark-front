@@ -18,6 +18,6 @@ build:
 deploy-benchmark-front:
   stage: deploy
   script:
-    - if [ $(docker ps | grep $IMAGE_NAME | wc -l) -gt 0 ]; then docker stop $CONTAINER_NAME; fi
+    - if [ $(docker ps | grep $CONTAINER_NAME | wc -l) -gt 0 ]; then docker stop $CONTAINER_NAME; fi
     - docker login -u $DOCKER_USER -p $DOCKER_PASS
     - docker run --rm -d -p 4444:4444 --name $CONTAINER_NAME $IMAGE_NAME
