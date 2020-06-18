@@ -100,6 +100,11 @@ export class BenchmarkComponent implements OnInit {
           fontColor: this.sectionColors,
           fontStyle: 'bold italic'
         },
+        ticks: {
+          max: 5,
+          min: 0,
+          stepSize: 0.5
+        }
       }
     };
     this.sectionChart = {
